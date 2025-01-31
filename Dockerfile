@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install --no-cache-dir faster-whisper
 
 # Copy local files to the container
-COPY . .
+COPY test.py .
 
 # Set entrypoint
-CMD ["python3", "testInitFW.py"]
+CMD ["python3", "test.py"]
