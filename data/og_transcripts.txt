@@ -1,0 +1,85 @@
+---
+Transcription of samples/test_audio.m4a
+ Ceci est un test, ceci est un test, est-ce que ça marche ?
+
+---
+Transcription of samples/lecture.m4a
+ La lecture est une activité essentielle dans la vie quotidienne. Non seulement elle permet d’acquérir des connaissances,
+ mais elle stimule également l’imagination et développe la pensée critique. Lire régulièrement améliore la concentration, 
+ enrichit le vocabulaire et renforce la capacité d’analyse.
+ En outre, la lecture est un excellent moyen de se détendre. 
+ Plonger dans un roman captivant permet de s’évader du stress quotidien et de voyager à travers les mots. 
+ De plus, la diversité des genres littéraires permet à chacun de trouver son bonheur, que ce soit à travers la fiction, 
+ l’histoire, la science ou encore la philosophie.
+
+---
+Transcription of samples/intro_essay.m4a
+ “La vie, toujours avec ses stratagèmes,
+ Avec tant de trésors si inattendus,
+ Créa une liste de poils et de poèmes,
+ De dents et de systèmes pour la conquête.
+
+ Le monde s’emplit de couleurs,
+ L’air se remplit d’appels et de gémissements,
+ Depuis ce jour où la nature inventa l’amour,
+ Sa plus belle invention”.
+
+ Compositeur Uruguayen, Jorge Drexler évoque la genèse de la vie grâce à la reproduction sexuée :
+ la rencontre de deux cellules. Il évoque ce début à travers la poésie mais aussi en utilisant la note la plus
+ grave de l’oboie au début de la musique, symbole d’origine dans son oeuvre et de toutes les notes musicales qui la constituent.
+ Presque comme par enchantement, des éléments émergent dans la nature, et elle se teint de couleur. L’oeuvre que nous allons
+ analyser dans ce document aborde cette même thématique, la génèse de la vie.
+
+---
+Transcription of samples/ines_test.m4a
+ Bonjour je m’appelle Inés et je suis étudiante en Master 1 Androide à la Sorbonne Université.
+
+---
+Transcription of samples/franglish.m4a
+ Le Franglish. You can’t read this article si t’es pas bilingue. Anglais et Français.
+ Being bilingual est parmi the best pleasures dans le monde entier. Think about it pour un instant.
+ You can utiliser deux different languages en même temps in a such a way that makes ton cerveau wants 
+ to exploser from the speed par la quelle it switches from one langue to l'autre but still tu peux do it and ressentir 
+ spécial(e) at the same time, et c'est pour a you are unique. Le fact that tu peux lire this article without stopping 
+ to think est un talent très few people have. La majorité of people struggle to lire juste in one single language, but 
+ what you are doing maintenant est un signe of absolute genius. Reading a tres complicated texte in two langues différentes 
+ seamlessly makes you un(e) nerd et someone qui trouve joy in languages. Reading cet article must have given your brain 
+ a nice little workout.
+ That's why you should le partager avec vos amis.
+ De rien in advance and have a très bonne journée. 
+
+---
+Transcription of samples/avec-video.m4a
+ Aujourd'hui j'ai eu cours à Yitangmi, c'était un cours de IHM, Interaction en Machine,
+ et après l'après-midi je suis allée donner un cours de maths à un garçon en seconde.
+
+---
+Transcription of samples/homophones.m4a
+ Je fais un test avec de la musique au fond utilisant le micro de mes casques bluetooth.
+ Et je vais essayé de faire  des phrases avec de homophones.
+ Il est allé voir la mer, mais il aimerait mieux voir sa mère.
+ Son père perd souvent ses clés, ce qui le met en colère.
+ Ces cerises sont sucrées, mais celles-là sont plus acides.
+
+---
+Transcription of samples/assignment.m4a
+ I'll read an extract of an assignment.
+ A Welch t-test was conducted to compare sample efficiency, with the null hypothesis 
+ H0 stating that the mean steps to convergence are equal for both models. The results are:
+ Maze 3x3: H0 cannot be rejected with 90% of confidence. Figure 1 shows nearly identical mean steps for both models.
+ Maze 5x5: H0 is rejected with 95% of confidence. Dyna-Q is more efficient, though Figure 1 shows some overlap 
+ in error bounds, indicating occasional comparable performance by Q-learning.
+ Maze 8x8 : H0 is rejected with 87% confidence. Dyna-Q is more efficient, with narrower error bounds in Figure 1.
+ Dyna-Q demonstrates superior sample efficiency, particularly in larger mazes. For smaller mazes, its advantage 
+ diminishes due to minimal real interactions required.
+
+---
+Transcription of samples/chiffres.m4a
+ Test avec des nombres et des dates.
+ Rendez-vous le 15 avril 2025 à 14h30 précises.
+ J’ai acheté 3 kilos de pommes et 2 litres de lait pour 12 euros.
+
+---
+Transcription of samples/sample.mp3
+ Et non seulement on a montré l’unicité mais on a aussi on a exploité l’unicité à fond de manière 
+ à savoir exactement quoi poser pour l'existence
