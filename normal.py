@@ -12,7 +12,7 @@ model_size = "large-v3"
 
 model = WhisperModel(model_size, device="cpu", compute_type="int8")
 start = time.time()
-segments, info = model.transcribe("samples/ines_test.m4a", beam_size=5)
+segments, info = model.transcribe("samples/sample.mp3", beam_size=5)
 end = time.time()
 print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 print("Transcription took %.2fs" % (end - start))

@@ -15,7 +15,9 @@ model_size = "large-v3"
 path = "/Users/ines/androide/p-androide/samples"
 
 model = WhisperModel(model_size, device="cpu", compute_type="int8")
-timeFile = open("exec_time.txt", "w")
+timeFile = open("data/exec_time.txt", "w")
+scriptFile = open("data/fw_scripts.txt", "w")
+i = 1
 
 for name in glob.glob('samples/*.m4a'):
     start = time.time()
@@ -26,9 +28,13 @@ for name in glob.glob('samples/*.m4a'):
 
     timeFile.write(f"{name}\t")
     timeFile.write("%.2f\n" % (end - start))
-
-    print("\n---")
-    print("Transcription of %s" % (name))
+    
+    scriptFile.write("\n(%d) "% i)
+    scriptFile.write("Transcription of %s" % (name))
     for segment in segments:
-        print("%s" % (segment.text))
+        scriptFile.write("%s" % (segment.text))
+    
+    i += 1
+
 timeFile.close()
+scriptFile.close()
