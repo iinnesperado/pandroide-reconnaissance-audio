@@ -1,0 +1,55 @@
+(1) Transcription of samples/test_audio.m4a Ceci est un test, ceci est un test, est-ce que ça marche ?
+
+(2) Transcription of samples/lecture.m4a    Je fais ce test en enregistrant sur le micro de mon ordi son bruit de fond. Je vais lire un texte. La lecture est une activité essentielle dans la vie quotidienne. Non seulement elle permet d'acquérir des connaissances, mais elle stimule également l'imagination et développe la pensée critique. Lire régulièrement améliore la concentration, enrichit le vocabulaire et renforce la capacité d'analyse. En outre, la lecture est un excellent moyen de se détendre. Plonger dans un roman captivant permet de s'évader du stress quotidien et de voyager à travers les mots. De plus, la diversité des genres littéraires permet à chacun de trouver son bonheur, que ce soit à travers la fiction, l'histoire, la science ou encore la philosophie.
+
+(3) Transcription of samples/intro_essay.m4a    La vie, toujours avec ses stratagèmes, avec tant de trésors si inattendus,  crée une liste de poils et de poèmes, de dons et de systèmes pour la conquête. Le vent s'emplit de couleurs, l'air se remplit d'appels et de gémissements depuis ce jour où la nature inventa l'amour, sa plus belle invention. Compositeur uruguayen, Jorge de Lecter évoque la jeunesse de la vie grâce à la reproduction sexuée, la rencontre de deux cellules. Il évoque ce début à travers la poésie, mais aussi en utilisant la note la plus grave de l'orgueoie au début de la musique, symbole d'origine dans son œuvre et de toutes les notes musicales qui la constituent. Presque comme par enchantement, des éléments émergent dans la nature et elles se teintent de couleurs. L'œuvre que nous allons analyser dans ce document aborde cette même thématique, la jeunesse de la vie.
+
+(4) Transcription of samples/ines_test.m4a  Bonjour, je m'appelle Inès et je suis étudiante au Master 1 Android à la Sorbonne Université.
+
+(5) Transcription of samples/franglish.m4a  Le franglish. You can read this article si t'es pas bilingue. Anglais et français.  Being bilingual est parmi the best pleasures dans le monde entier. Think about it pour un instant.  You can utiliser des différents langages en même temps in such a way that makes ton cerveau want to exploser   from the speed par laquelle it switches from one language to l'autre.
+ But still, tu peux do it en ressentir spécial at the same time. Et c'est pour ça que you are unique.
+ Le fait que tu peux lire this article without stopping to think est un talent très few people have.
+ La majorité of people struggle to lire just one single language.
+ But what you are doing maintenant est un signe.
+ Of absolute genius.
+ Reading a très complicated texte in two langues différentes seamlessly makes you un nerd
+ et sometimes someone qui trouve joy in languages.
+ Reading cet article must have given your brain a nice little workout.
+ That's why you should le partager avec vos amis.
+ De rien in advance and have a très bonne journée.
+
+(6)
+Transcription of samples/avec-video.m4a
+ Aujourd'hui j'ai eu cours à Yitangmi, c'était un cours de IHM, Interaction en Machine,
+ et après l'après-midi je suis allée donner un cours de maths à un garçon en seconde.
+
+(7)
+Transcription of samples/homophones.m4a
+ Je fais un test avec de la musique au fond, utilisant le micro de mes cases Bluetooth.
+ Et je vais essayer de faire des phrases avec des homophones.
+ Il est allé voir la mer, mais il aimerait mieux voir sa mère.
+ Son père perd souvent ses clés, ce qui le met en colère.
+ Ses orices sont sucrées, mais celles-là sont plus acides.
+
+(8)
+Transcription of samples/assignment.m4a
+ I'll read an extract of an assignment.
+ A Welch t-test was conducted to compare sample efficiency with the null hypothesis H0 stating
+ that the mean steps to convergence are equal for both models. The results are for the maze
+ 3-3, H0 cannot be rejected with 90% of confidence. Figure 1 shows nearly identical mean steps for
+ both models. Maze 5-5, H0 is rejected with 95% of confidence. Dynacue is more efficient.
+ So figure 1 shows some overlap in error bounds indicating
+ occasions of error bounds.
+ Maze 8-8, H0 is rejected with 87% confidence. Dynacue is more efficient with narrower errors
+ bounds in figure 1. Dynacue demonstrates superior sample efficiency, particularly in larger mazes.
+ For smaller mazes, its advantage diminishes due to the minimal real interactions required.
+
+(9)
+Transcription of samples/chiffres.m4a
+ Test avec des nombres et des dates.
+ Rendez-vous le 15 avril 2025 à 14h30 précise.
+ J'ai acheté 3 kg de pommes et 2 litres de lait pour 12 euros.
+
+(10)
+Transcription of samples/sample.mp3
+ Non seulement on a montré l'unicité, mais on a aussi exploité à fond de manière à savoir exactement quoi poser pour l'existence.

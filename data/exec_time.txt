@@ -1,0 +1,10 @@
+samples/test_audio.m4a	6.79
+samples/lecture.m4a	6.71
+samples/intro_essay.m4a	6.94
+samples/ines_test.m4a	7.03
+samples/franglish.m4a	7.23
+samples/avec-video.m4a	7.42
+samples/homophones.m4a	7.34
+samples/existance.m4a	7.31
+samples/assignment.m4a	7.49
+samples/chiffres.m4a	9.71
