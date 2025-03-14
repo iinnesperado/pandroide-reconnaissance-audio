@@ -1,6 +1,5 @@
 from faster_whisper import WhisperModel
 import time
-import os
 import glob
 
 model_size = "large-v3"
@@ -12,14 +11,15 @@ model_size = "large-v3"
 # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
 # or run on CPU with INT8
 
-path = "/Users/ines/androide/p-androide/samples"
-
 model = WhisperModel(model_size, device="cpu", compute_type="int8")
+
 timeFile = open("data/exec_time.txt", "w")
 scriptFile = open("data/fw_scripts.txt", "w")
 i = 1
 
-for name in glob.glob('samples/*.m4a'):
+directory = glob.glob('samples/*.m4a') + glob.glob('samples/*.mp3')
+
+for name in directory:
     start = time.time()
     segments, info = model.transcribe(name, beam_size=5)
     end = time.time()
@@ -34,6 +34,7 @@ for name in glob.glob('samples/*.m4a'):
     for segment in segments:
         scriptFile.write("%s" % (segment.text))
     
+    print("Faster-Whisper finit pour fichier ", name)
     i += 1
 
 timeFile.close()
