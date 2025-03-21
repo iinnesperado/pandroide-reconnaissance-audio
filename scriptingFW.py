@@ -5,7 +5,7 @@ import re
 import os
 
 '''
-All data mentions refer to : 
+All mentions of 'data' refer to : 
     - execution time
     - accuracy score
 '''
@@ -44,7 +44,7 @@ def makeScript(audioPath, recordData = True):
         # print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
         script += segment.text
 
-    saveScript(script,"data/scripts/fw_"+ getFileName(audioPath) + ".txt")
+    saveScript(script,"scripts/fw_"+ getFileName(audioPath) + ".txt")
 
 
     return script
@@ -124,8 +124,8 @@ def evaluateAudio(audioPath, recordData = True):
     '''
 
     makeScript(audioPath, recordData)
-    fw_file = "data/scripts/fw_"+getFileName(audioPath)+".txt"
-    og_file = "data/scripts/og_"+getFileName(audioPath)+".txt"
+    fw_file = "scripts/fw_"+getFileName(audioPath)+".txt"
+    og_file = "scripts/og_"+getFileName(audioPath)+".txt"
     score = giveScore(fw_file,og_file)
 
     if recordData:
@@ -141,10 +141,12 @@ def evaluateAudio(audioPath, recordData = True):
     print("Finished avualiting audio file : '%s'" % getFileName(audioPath))
 
 
-def evaluateAllAudio():
+def evaluateAllAudio(directory = 'samples'):
     '''
-    Makes the evaluation of all the audio files found in the samples directory
+    Makes the evaluation of all the audio files found in 'directory', the data would be automatically be 
+    recorded into the files 'exec_time.txt' and 'accuracy_score.txt'
 
+    :params directory : str - directory path where the audio files are located
     :return void
     '''
     if os.path.exists("data/exec_time.txt") :
@@ -152,7 +154,7 @@ def evaluateAllAudio():
     if os.path.exists("data_accuracy_score.txt"):
         os.remove("data/accuracy_score.txt")
 
-    files = os.listdir('samples')
+    files = os.listdir(directory)
     for audioPath in files :
         if audioPath.endswith(('.m4a','.mp3')):
             evaluateAudio(audioPath, recordData=True)
@@ -161,9 +163,12 @@ def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
 
 def main():
-    # evaluateAudio("samples/assignment.m4a", recordData=False)
-    # evaluateAllAudio()
-    print('ok.')
+    # Evaluating only one data, recommended to have recordData = False to not polluate the data files
+    evaluateAudio("samples/assignment.m4a", recordData=False)
+
+    # Evaluating all the files in 'samples' directory
+    # evaluateAllAudio(directory='samples')
+    print('Finished.')
     
 
 
