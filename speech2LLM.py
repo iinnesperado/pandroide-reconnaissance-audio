@@ -1,14 +1,15 @@
 from faster_whisper import WhisperModel
+from ollama import chat
 import time
 import collections
 import re
 import os
 
-'''
-All mentions of 'data' refer to : 
-    - execution time
-    - accuracy score
-'''
+# All mentions of 'data' refer to : 
+#     - execution time
+#     - accuracy score
+
+# Audio processing stuff 
 
 def getText(audioPath, recordData = True):
     '''
@@ -140,7 +141,6 @@ def processAudio(audioPath, recordData = True):
         print("Score of audio transcriptions of '%s' : %.2f" % (getFileName(audioPath), score))
     print("Finished avualiting audio file : '%s'" % getFileName(audioPath))
 
-
 def processAllAudio(directory = 'samples'):
     '''
     Processes of all the audio files found in 'directory', the data would be automatically be 
@@ -161,6 +161,30 @@ def processAllAudio(directory = 'samples'):
 
 def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
+
+
+# LLM processing stuff
+
+def getResponse(content, model = 'llama3.2:3b'):
+    '''
+    Takes a message and inputs it to the chat to ollama with the 
+    predeterminated model 'llama3.2:3b'
+
+    :params content : - str : content given to the llm 
+    :parans model : str - model name of the llm to be used to process the msg
+    :returns answer : str - answer of the llm
+    '''
+
+    messages = [
+        {
+            'role' : 'user',
+            'content' : content,
+        },
+    ]
+
+    response = chat(model, messages=messages)
+    answer = response['message']['content']
+    return answer
 
 def main():
     # Processes only one data, recommended to have recordData = False to not polluate the data files
