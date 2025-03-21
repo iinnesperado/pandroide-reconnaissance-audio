@@ -10,7 +10,7 @@ All mentions of 'data' refer to :
     - accuracy score
 '''
 
-def makeScript(audioPath, recordData = True):
+def speech2text(audioPath, recordData = True):
     '''
     Fait la transcription du fichier audio donnée
     
@@ -113,17 +113,17 @@ def giveScore(fw_file, og_file):
 
     return score
 
-def evaluateAudio(audioPath, recordData = True):
+def processAudio(audioPath, recordData = True):
     '''
-    Takes an audio file, makes the transcriptwith faster-whisper, saves the
+    Takes an audio file, makes the transcript with faster-whisper, saves the
     transcript into a file and gives it a score that is saved into accuracy_score.txt file
 
-    :params audioPath : str - file path of the audio file to evaluate
+    :params audioPath : str - file path of the audio file to process
     :params recordData : bool - if True it writes the data into a file, else just prints it
     :return void
     '''
 
-    makeScript(audioPath, recordData)
+    speech2text(audioPath, recordData)
     fw_file = "scripts/fw_"+getFileName(audioPath)+".txt"
     og_file = "scripts/og_"+getFileName(audioPath)+".txt"
     score = giveScore(fw_file,og_file)
@@ -141,9 +141,9 @@ def evaluateAudio(audioPath, recordData = True):
     print("Finished avualiting audio file : '%s'" % getFileName(audioPath))
 
 
-def evaluateAllAudio(directory = 'samples'):
+def processAllAudio(directory = 'samples'):
     '''
-    Makes the evaluation of all the audio files found in 'directory', the data would be automatically be 
+    Processes of all the audio files found in 'directory', the data would be automatically be 
     recorded into the files 'exec_time.txt' and 'accuracy_score.txt'
 
     :params directory : str - directory path where the audio files are located
@@ -157,17 +157,17 @@ def evaluateAllAudio(directory = 'samples'):
     files = os.listdir(directory)
     for audioPath in files :
         if audioPath.endswith(('.m4a','.mp3')):
-            evaluateAudio(audioPath, recordData=True)
+            processAudio(audioPath, recordData=True)
 
 def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
 
 def main():
-    # Evaluating only one data, recommended to have recordData = False to not polluate the data files
-    evaluateAudio("samples/assignment.m4a", recordData=False)
+    # Processes only one data, recommended to have recordData = False to not polluate the data files
+    processAudio("samples/assignment.m4a", recordData=False)
 
-    # Evaluating all the files in 'samples' directory
-    # evaluateAllAudio(directory='samples')
+    # Processes all the files in 'samples' directory
+    # processAllAudio(directory='samples')
     print('Finished.')
     
 
