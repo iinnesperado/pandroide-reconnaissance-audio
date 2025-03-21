@@ -10,7 +10,7 @@ All mentions of 'data' refer to :
     - accuracy score
 '''
 
-def speech2text(audioPath, recordData = True):
+def getText(audioPath, recordData = True):
     '''
     Fait la transcription du fichier audio donnée
     
@@ -71,7 +71,7 @@ def saveTime(audioPath, execTime):
     file.write(audioPath + "\t%.2f\n" % (execTime))
     file.close()
 
-def giveScore(fw_file, og_file):
+def getScore(fw_file, og_file):
     '''
     Gives accuracy score to the transcription done by faster-wshiper out of 100.
     Score = num of words missing in fw_text (compared to og_text)/ total words in og_text
@@ -123,10 +123,10 @@ def processAudio(audioPath, recordData = True):
     :return void
     '''
 
-    speech2text(audioPath, recordData)
+    getText(audioPath, recordData)
     fw_file = "transcriptions/fw_"+getFileName(audioPath)+".txt"
     og_file = "transcriptions/og_"+getFileName(audioPath)+".txt"
-    score = giveScore(fw_file,og_file)
+    score = getScore(fw_file,og_file)
 
     if recordData:
         # Saves scores in file data/accuracy_score.txt
