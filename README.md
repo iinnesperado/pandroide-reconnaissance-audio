@@ -11,3 +11,4 @@ Les details du sujet sont dans le lien suivant : https://androide.lip6.fr/node/7
 
 Outils:
 - faster whisper (https://github.com/SYSTRAN/faster-whisper)
+- ollama 
