@@ -5,7 +5,7 @@ Projet réalisé dans le cadre du M1 Androide (AI2D)
 
 Les details du sujet sont dans le lien suivant : https://androide.lip6.fr/node/743
 
-**Encadrants :** Emiland GARRABE et Stephane DONCIEUX
+**Encadrants :** Stephane DONCIEUX et Emiland GARRABE 
 
 **Étudiants :** Inès RAHAOUI et Inés Tian RUIZ-BRAVO PLOVINS
 
