@@ -16,7 +16,7 @@ def speech2text(audioPath, recordData = True):
     
     :param audioPath : str - path to audio file (m4a or mp3)
     :params recordData : bool - if True it writes the data into a file, else just prints it
-    :return script : str
+    :return text : str - transcription of the audio
     :return execTime : float
     '''
 
@@ -39,28 +39,28 @@ def speech2text(audioPath, recordData = True):
     else :
         print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),execTime))
 
-    script = ""
+    text = ""
     for segment in segments:
         # print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
-        script += segment.text
+        text += segment.text
 
-    saveScript(script,"scripts/fw_"+ getFileName(audioPath) + ".txt")
+    saveText(text,"transcriptions/fw_"+ getFileName(audioPath) + ".txt")
 
 
-    return script
+    return text
 
-def saveScript(script, filePath):
+def saveText(text, filePath):
     '''
-    Creates a file and saves the script of the audioPath done by faster-whisper
+    Creates a file and saves the transcriptions of the audioPath done by faster-whisper
     as well as record the execution time into ecxec_time.txt file
     
-    :param script : str - content (text) to save into a file
-    :param filePath : str - file path to the file where the script will be saved
+    :param text : str - content (text) to save into a file
+    :param filePath : str - file path to the file where the transcriptions will be saved
     :return void
     '''
 
     file = open(filePath, "w")
-    file.write(script)
+    file.write(text)
     file.close()
 
 def saveTime(audioPath, execTime):
@@ -73,10 +73,10 @@ def saveTime(audioPath, execTime):
 
 def giveScore(fw_file, og_file):
     '''
-    Calcule le accuracy score de la transcription de faster-whisper sur 100.
-    Score = nb de mots manquant en fw_text (par rapport à og_text)/ total mots de og_text
+    Gives accuracy score to the transcription done by faster-wshiper out of 100.
+    Score = num of words missing in fw_text (compared to og_text)/ total words in og_text
     
-    :param  fw_file, og_file : str - file path du script 
+    :param  fw_file, og_file : str - file path to transcription
     :return score : float
     '''
     
@@ -115,8 +115,8 @@ def giveScore(fw_file, og_file):
 
 def processAudio(audioPath, recordData = True):
     '''
-    Takes an audio file, makes the transcript with faster-whisper, saves the
-    transcript into a file and gives it a score that is saved into accuracy_score.txt file
+    Takes an audio file, makes the transcription with faster-whisper, saves the
+    transcription into a file and gives it a score that is saved into accuracy_score.txt file
 
     :params audioPath : str - file path of the audio file to process
     :params recordData : bool - if True it writes the data into a file, else just prints it
@@ -124,8 +124,8 @@ def processAudio(audioPath, recordData = True):
     '''
 
     speech2text(audioPath, recordData)
-    fw_file = "scripts/fw_"+getFileName(audioPath)+".txt"
-    og_file = "scripts/og_"+getFileName(audioPath)+".txt"
+    fw_file = "transcriptions/fw_"+getFileName(audioPath)+".txt"
+    og_file = "transcriptions/og_"+getFileName(audioPath)+".txt"
     score = giveScore(fw_file,og_file)
 
     if recordData:
@@ -137,7 +137,7 @@ def processAudio(audioPath, recordData = True):
         file.write(audioPath + "\t%.2f\n" % (score))
         file.close()
     else : 
-        print("Score of audio script of '%s' : %.2f" % (getFileName(audioPath), score))
+        print("Score of audio transcriptions of '%s' : %.2f" % (getFileName(audioPath), score))
     print("Finished avualiting audio file : '%s'" % getFileName(audioPath))
 
 
