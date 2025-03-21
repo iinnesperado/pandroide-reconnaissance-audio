@@ -1,12 +1,10 @@
-# 1 - file name
-# 2 - same word/nb total mots %
 samples/test_audio.m4a	100.00
-samples/background_video.m4a	89.66
-samples/lecture.m4a	98.31
-samples/intro_essay.m4a	90.91
-samples/ines_presentation.m4a	81.25
-samples/franglish.m4a	90.00
-samples/homophones.m4a	90.48
-samples/existance.m4a	92.31
-samples/assignment.m4a	89.52
-samples/chiffres.m4a	93.10
+samples/background_video.m4a	90.00
+samples/lecture.m4a	98.32
+samples/intro_essay.m4a	90.97
+samples/ines_presentation.m4a	82.35
+samples/franglish.m4a	92.22
+samples/homophones.m4a	92.06
+samples/existance.m4a	92.59
+samples/assignment.m4a	90.40
+samples/chiffres.m4a	93.33
