@@ -172,15 +172,17 @@ def getFileName(filePath):
 
 # LLM processing stuff #
 
-def getResponse(content, model = "llama3.2:3b"):
+def getResponse(audioPath, model = "llama3.2:3b"):
     '''
-    Takes a message and inputs it to the chat to ollama with the 
+    Takes a audio file and inputs the trasncription done by faster-whisper to the chat to ollama with the 
     predeterminated model 'llama3.2:3b'
 
     :params content : - str : content given to the llm 
     :parans model : str - model name of the llm to be used to process the msg
     :returns answer : str - answer of the llm
     '''
+
+    content = getText(audioPath,record=False)
 
     messages = [
         {
@@ -205,11 +207,15 @@ def main():
     # the result in the terminal. Parameter og_file is only used when a file has different versions of ambient noise since
     # faster-whisper would give different files but the original transcription is the same.
     # processAudio("samples/calcul.m4a",'', record=False)
-    processAudio("samples/withNoise/calcul_coffee100.mp3","transcriptions/og_calcul.txt", record=False)
+    # processAudio("samples/withNoise/calcul_coffee10.mp3","transcriptions/og_calcul.txt", record=False)
 
 
     # Processes all the files in 'samples' directory
     # processAllAudio("samples")
+
+    answer = getResponse("samples/withNoise/calcul_coffee10.mp3",model="llama3.2:3b")
+    print(answer)
+
     print("Finished.")
     
 
