@@ -9,7 +9,7 @@ import os
 #     - execution time
 #     - accuracy score
 
-# Audio processing stuff 
+# Audio processing stuff #
 
 def getText(audioPath, recordData = True):
     '''
@@ -33,20 +33,20 @@ def getText(audioPath, recordData = True):
     model = WhisperModel(model_size, device="cpu", compute_type="int8")
     start = time.time()
     segments, info = model.transcribe(audioPath, beam_size=5)
-    end = time.time()
-    execTime = end - start
-    if recordData:
-        saveTime(audioPath, execTime)
-    else :
-        print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),execTime))
 
     text = ""
     for segment in segments:
         # print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
         text += segment.text
 
+    end = time.time()
+    execTime = end - start
+    if recordData:
+        saveTime(audioPath, execTime)
+    else :
+        print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),execTime))
+    
     saveText(text,"transcriptions/fw_"+ getFileName(audioPath) + ".txt")
-
 
     return text
 
@@ -163,7 +163,7 @@ def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
 
 
-# LLM processing stuff
+# LLM processing stuff #
 
 def getResponse(content, model = 'llama3.2:3b'):
     '''
@@ -185,6 +185,13 @@ def getResponse(content, model = 'llama3.2:3b'):
     response = chat(model, messages=messages)
     answer = response['message']['content']
     return answer
+
+# Plotting stuff #
+# NOTE end time to record exec time was put after text was saved into a var bc this step also took some time and so we believed it 
+# was more interesting to record that since its something to take into account with ollama implementation 
+# TODO plot exec time compared to 
+
+# MAIN #
 
 def main():
     # Processes only one data, recommended to have recordData = False to not polluate the data files
