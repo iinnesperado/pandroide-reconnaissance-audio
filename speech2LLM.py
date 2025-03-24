@@ -5,6 +5,7 @@ import collections
 import re
 import os
 import glob
+import matplotlib.pyplot as plt
 
 # All mentions of 'data' refer to : 
 #     - execution time
@@ -199,6 +200,11 @@ def getResponse(audioPath, model = "llama3.2:3b"):
 # NOTE end time to record exec time was put after text was saved into a var bc this step also took some time and so we believed it 
 # was more interesting to record that since its something to take into account with ollama implementation 
 # TODO plot exec time compared to 
+def plot_data(data, title):
+    xvalues = range(0,100,10)
+    plt.title(title)
+    plt.xlabel("Percentage level of noise")
+    plt.plot(xvalues, data, marker='o', linestyle='-')
 
 # MAIN #
 
@@ -213,9 +219,21 @@ def main():
     # Processes all the files in 'samples' directory
     # processAllAudio("samples")
 
-    answer = getResponse("samples/withNoise/calcul_coffee10.mp3",model="llama3.2:3b")
-    print(answer)
+    # files = glob.glob("samples/withNoise/*.mp3")
+    # for audio in files:
+    #     getText(audio, record=True)
 
+    # files = glob.glob("samples/withNoise/calcul_*.txt")
+    # for f in files:
+    #     getScore(f, og_file="transcriptions/ref/og_calcul.txt", record=True)
+
+    # print(getResponse("samples/withNoise/calcul_coffee80.mp3",model="llama3.2:3b"))
+
+    # score = []
+    # noise10 = glob.glob("samples/withNoise/*10.mp3")
+    # for f in noise10:
+    #     score.append(getScore(f, ))
+    # plot_data()
     print("Finished.")
     
 
