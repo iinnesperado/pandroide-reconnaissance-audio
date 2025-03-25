@@ -3,7 +3,7 @@ from ollama import chat
 messages = [
   {
     'role': 'user',
-    'content': 'Calcule le double de 10',
+    'content': 'What day are we today ?',
   },
 ]
 
