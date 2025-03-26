@@ -1,0 +1,28 @@
+class RobotActions:
+    def __init__(self):
+        self.current_location = "Home"
+        self.inventory = []
+
+    def move_to(self, destination):
+        """Move the robot to a specified location."""
+        self.current_location = destination
+        return f"Moved to {destination}."
+
+    def pick_up(self, item):
+        """Pick up an object and add it to inventory."""
+        self.inventory.append(item)
+        return f"Picked up {item}."
+
+    def deliver(self, item, recipient):
+        """Deliver an item to someone."""
+        if item in self.inventory:
+            self.inventory.remove(item)
+            return f"Delivered {item} to {recipient}."
+        else:
+            return f"Error: {item} not in inventory."
+
+    def speak(self, message):
+        """Make the robot say something."""
+        return f"Robot says: {message}"
+
+# Available commands: move_to(), pick_up(), deliver(), speak()
