@@ -1,5 +1,0 @@
-Est-ce que tu peux m'apporter une boisson ?
-Choisit un nombre, multiplie le par lui même et au résultat enlève 2. Qu'est-ce que tu obtiens ?
-Quelle heure est-il en ce moment ?
-Quelle est la date d'aujourd'hui ?
-Combiens de temps il reste pour le 13 juin ?

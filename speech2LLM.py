@@ -4,19 +4,21 @@ import time
 import collections
 import re
 import os
+import glob
+import matplotlib.pyplot as plt
 
 # All mentions of 'data' refer to : 
 #     - execution time
 #     - accuracy score
 
-# Audio processing stuff 
+# Audio processing stuff #
 
-def getText(audioPath, recordData = True):
+def getText(audioPath, record):
     '''
     Fait la transcription du fichier audio donnée
     
     :param audioPath : str - path to audio file (m4a or mp3)
-    :params recordData : bool - if True it writes the data into a file, else just prints it
+    :params record : bool - if True it writes the data into a file, else just prints it
     :return text : str - transcription of the audio
     :return execTime : float
     '''
@@ -33,20 +35,20 @@ def getText(audioPath, recordData = True):
     model = WhisperModel(model_size, device="cpu", compute_type="int8")
     start = time.time()
     segments, info = model.transcribe(audioPath, beam_size=5)
-    end = time.time()
-    execTime = end - start
-    if recordData:
-        saveTime(audioPath, execTime)
-    else :
-        print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),execTime))
 
     text = ""
     for segment in segments:
         # print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
         text += segment.text
 
+    end = time.time()
+    execTime = end - start
+    if record:
+        saveData(audioPath, "exec_time", execTime)
+    else :
+        print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),execTime))
+    
     saveText(text,"transcriptions/fw_"+ getFileName(audioPath) + ".txt")
-
 
     return text
 
@@ -64,24 +66,35 @@ def saveText(text, filePath):
     file.write(text)
     file.close()
 
-def saveTime(audioPath, execTime):
+def saveData(audioPath, dataType, data):
+    '''
+    Saves the data (execution time or score) into a file in the directory 'data'
+
+    :params audioPath : str - reference to know to wich audio file the data is from
+    :params dataType : str - name of the file where the data is going to be saved
+    :params data : float - the data to save
+    :return void
+    '''
     try:
-        file = open("data/exec_time.txt", "a")
+        file = open("data/" + dataType + ".txt", "a")
     except:
-        file = open("data/exec_time.txt", "w")
-    file.write(audioPath + "\t%.2f\n" % (execTime))
+        file = open("data/" + dataType + ".txt", "w")
+    file.write(audioPath + "\t%.2f\n" % (data))
     file.close()
 
-def getScore(fw_file, og_file):
+def getScore(audioPath, og_file, record):
     '''
     Gives accuracy score to the transcription done by faster-wshiper out of 100.
     Score = num of words missing in fw_text (compared to og_text)/ total words in og_text
     
-    :param  fw_file, og_file : str - file path to transcription
+    :params audioPath : str - path to audio file (m4a or mp3)
+    :param  og_file : str - file path to transcription
+    :params record : bool - if True it writes the data into a file, else just prints it
     :return score : float
     '''
     
     # Transcription faite par faster whisper
+    fw_file = "transcriptions/fw_"+getFileName(audioPath)+".txt"
     fwFile = open(fw_file, "r")
     fw_read = fwFile.read()
     fwFile.close()
@@ -99,7 +112,7 @@ def getScore(fw_file, og_file):
 
     # missedWords donne les mots qui ne sont pas dans fw_text par rapport à og_text
     missedWords = set(og_text) - set(fw_text)
-    # print("Mots manquants dans la transcription de fw :", missedWords))
+    # print("Mots manquants dans la transcription de fw :", missedWords)
 
     # Transforme la liste de mots og_text en dictionaire de fréquences de mots
     # pour savoir le nombre total de mots qui manquent (cas où un mots serait plusieurs fois
@@ -110,38 +123,33 @@ def getScore(fw_file, og_file):
         cpt += og_dict[word]
     
     score = ((total_mots - cpt)/total_mots)*100
-    # print(score)
+    if record:
+        saveData(audioPath, "accuracy_score", score)
+    else : 
+        print("Score of audio transcriptions of '%s' : %.2f" % (getFileName(audioPath), score))
 
     return score
 
-def processAudio(audioPath, recordData = True):
+
+def processAudio(audioPath, og_file = '', record=False):
     '''
     Takes an audio file, makes the transcription with faster-whisper, saves the
     transcription into a file and gives it a score that is saved into accuracy_score.txt file
 
     :params audioPath : str - file path of the audio file to process
-    :params recordData : bool - if True it writes the data into a file, else just prints it
+    :params of_file : str - used for cases when the og file has a different name to the fw file as it exist different audio versions of the same text (ambient noise differences)
+    :params record : bool - if True it writes the data into a file, else just prints it on the terminal
     :return void
     '''
 
-    getText(audioPath, recordData)
-    fw_file = "transcriptions/fw_"+getFileName(audioPath)+".txt"
-    og_file = "transcriptions/og_"+getFileName(audioPath)+".txt"
-    score = getScore(fw_file,og_file)
-
-    if recordData:
-        # Saves scores in file data/accuracy_score.txt
-        try:
-            file = open("data/accuracy_score.txt","a")
-        except:
-            file = open("data/accuracy_score.txt","w")
-        file.write(audioPath + "\t%.2f\n" % (score))
-        file.close()
-    else : 
-        print("Score of audio transcriptions of '%s' : %.2f" % (getFileName(audioPath), score))
+    getText(audioPath, record)
+    
+    if og_file == '' :
+        og_file = "transcriptions/og_"+getFileName(audioPath)+".txt"
+    getScore(audioPath,og_file, record)
     print("Finished avualiting audio file : '%s'" % getFileName(audioPath))
 
-def processAllAudio(directory = 'samples'):
+def processAllAudio(directory = "samples"):
     '''
     Processes of all the audio files found in 'directory', the data would be automatically be 
     recorded into the files 'exec_time.txt' and 'accuracy_score.txt'
@@ -151,29 +159,31 @@ def processAllAudio(directory = 'samples'):
     '''
     if os.path.exists("data/exec_time.txt") :
         os.remove("data/exec_time.txt")
-    if os.path.exists("data_accuracy_score.txt"):
+    if os.path.exists("data/accuracy_score.txt"):
         os.remove("data/accuracy_score.txt")
 
-    files = os.listdir(directory)
+    files = glob.glob(directory + "/*.m4a") + glob.glob(directory + "/*.mp3")
+    pass
     for audioPath in files :
-        if audioPath.endswith(('.m4a','.mp3')):
-            processAudio(audioPath, recordData=True)
+        processAudio(audioPath,og_file='', record=True)
 
 def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
 
 
-# LLM processing stuff
+# LLM processing stuff #
 
-def getResponse(content, model = 'llama3.2:3b'):
+def getResponse(audioPath, model = "llama3.2:3b"):
     '''
-    Takes a message and inputs it to the chat to ollama with the 
+    Takes a audio file and inputs the trasncription done by faster-whisper to the chat to ollama with the 
     predeterminated model 'llama3.2:3b'
 
     :params content : - str : content given to the llm 
     :parans model : str - model name of the llm to be used to process the msg
     :returns answer : str - answer of the llm
     '''
+
+    content = getText(audioPath,record=False)
 
     messages = [
         {
@@ -186,13 +196,45 @@ def getResponse(content, model = 'llama3.2:3b'):
     answer = response['message']['content']
     return answer
 
+# Plotting stuff #
+# NOTE end time to record exec time was put after text was saved into a var bc this step also took some time and so we believed it 
+# was more interesting to record that since its something to take into account with ollama implementation 
+# TODO plot exec time compared to 
+def plot_data(data, title):
+    xvalues = range(0,100,10)
+    plt.title(title)
+    plt.xlabel("Percentage level of noise")
+    plt.plot(xvalues, data, marker='o', linestyle='-')
+
+# MAIN #
+
 def main():
-    # Processes only one data, recommended to have recordData = False to not polluate the data files
-    processAudio("samples/assignment.m4a", recordData=False)
+    # Processes only one audio file, recommended to have record = False to not polluate the data files, it will then print
+    # the result in the terminal. Parameter og_file is only used when a file has different versions of ambient noise since
+    # faster-whisper would give different files but the original transcription is the same.
+    # processAudio("samples/calcul.m4a",'', record=False)
+    # processAudio("samples/withNoise/calcul_coffee10.mp3","transcriptions/og_calcul.txt", record=False)
+
 
     # Processes all the files in 'samples' directory
-    # processAllAudio(directory='samples')
-    print('Finished.')
+    # processAllAudio("samples")
+
+    # files = glob.glob("samples/withNoise/*.mp3")
+    # for audio in files:
+    #     getText(audio, record=True)
+
+    # files = glob.glob("samples/withNoise/calcul_*.txt")
+    # for f in files:
+    #     getScore(f, og_file="transcriptions/ref/og_calcul.txt", record=True)
+
+    # print(getResponse("samples/withNoise/calcul_coffee80.mp3",model="llama3.2:3b"))
+
+    # score = []
+    # noise10 = glob.glob("samples/withNoise/*10.mp3")
+    # for f in noise10:
+    #     score.append(getScore(f, ))
+    # plot_data()
+    print("Finished.")
     
 
 

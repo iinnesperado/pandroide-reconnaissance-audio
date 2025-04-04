@@ -1,0 +1,1 @@
+Choisis un nombre, multiplie-le par lui-même et, au résultat, enlève-lui deux. Qu'est-ce que tu obtiens?
