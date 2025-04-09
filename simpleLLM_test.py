@@ -6,8 +6,8 @@ coda = file.read()
 messages = [
   {
     'role': 'user',
-    'content': f'You are a robot assistant with the following capabilities:  {coda} '
-    'I ask you now to bring me a coffee from the kitchen, I am at Home. '
+    'content': f'You are a robot assistant with the following capabilities in the RobotActions class:  {coda} '
+    'The user asks : "bring me some water from the living room, I am at Home". '
     'What action(s) do you take? Respond with only the necessary function calls in Python-like syntax.  ',
   },
 ]

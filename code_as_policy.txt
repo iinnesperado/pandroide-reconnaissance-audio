@@ -1,0 +1,6 @@
+- `current_location()` → Your current location. You start in the living room of the house.
+- `inventory()` → List of objects in your inventory. It starts empty.
+- `go_to(place)` → Move to a location.
+- `report_status()` → Say what you’re doing.
+- `pick_up(item)` → Pick up an object by adding it to inventory.
+- `give_to(item, recipient)` → Give an item form your inventory to someone.
