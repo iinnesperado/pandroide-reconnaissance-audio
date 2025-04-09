@@ -200,7 +200,7 @@ def getFileName(filePath):
 
 # LLM processing stuff #
 
-def getResponse(audioPath, model = "llama3.2:3b"):
+def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
     '''
     Takes a audio file and inputs the trasncription done by faster-whisper to the chat to ollama with the 
     predeterminated model 'llama3.2:3b'
@@ -210,12 +210,17 @@ def getResponse(audioPath, model = "llama3.2:3b"):
     :returns answer : str - answer of the llm
     '''
 
-    content = getText(audioPath,record=False)
+    command = getText(audioPath, record=False)
+    file = open("coda.txt", "r")
+    capabilities = file.read()
 
     messages = [
         {
             'role' : 'user',
-            'content' : content,
+            'content' : f'You are a robot controlled by the following Python class (your CODA policy):  {capabilities} '
+                f'Command "{command}". '
+                'What action(s) do you take? Respond with only the necessary function calls in Python-like syntax.',
+                # "If you don't understant the user you can ask for clarifications, and specifying what needs to be clarified.",
         },
     ]
 
@@ -223,10 +228,9 @@ def getResponse(audioPath, model = "llama3.2:3b"):
     answer = response['message']['content']
     return answer
 
+
 # Plotting stuff #
-# NOTE end time to record exec time was put after text was saved into a var bc this step also took some time and so we believed it 
-# was more interesting to record that since its something to take into account with ollama implementation 
-# TODO plot exec time compared to 
+
 def plotScore():
     score = {noise : [] for noise in range(0, 101, 10)}
     
@@ -248,6 +252,8 @@ def plotScore():
         currentScore = getScore(audioPath,og_file, record=False)
         score[0].append(round(currentScore, 2))
 
+    print(score)
+
     data = []
     q1 = []
     q3 = []
@@ -256,7 +262,6 @@ def plotScore():
         q1.append(np.quantile(score[i],0.25))
         q3.append(np.quantile(score[i],0.75))
 
-    # print(score[20])
 
     # Plot
     plt.figure(figsize=(7,7))
@@ -286,22 +291,25 @@ def plotTimeComp():
 # MAIN #
 
 def main():
-    # Processes only one audio file, recommended to have record = False to not polluate the data files, it will then print
-    # the result in the terminal. Parameter og_file is only used when a file has different versions of ambient noise since
-    # faster-whisper would give different files but the original transcription is the same.
-    # processAudio("samples/assignment.m4a", record=False)
-    # processAudio("samples/withNoise/calcul_coffee10.mp3", record=False)
-
+    # Processes only one audio file, predetermined to have record = False to not polluate the data files, 
+    # it will then print the result in the terminal
+    # processAudio("samples/assignment.m4a")
+    # processAudio("samples/withNoise/calcul_coffee10.mp3")
 
     # Processes all the files in 'samples' directory
     # processAllAudio("samples")
 
-    # print(getResponse("samples/withNoise/calcul_coffee80.mp3",model="llama3.2:3b"))
-    # print(getResponse("samples/code.m4a",model="llama3.2:3b"))
+    # getText("samples/juin.m4a", record=False)
 
-    plotScore()
-    plotTimeComp()
-    plt.show()
+    # Plotting data
+    # plotScore()
+    # plotTimeComp()
+    # plt.show()
+
+    # Test CODA's Policy
+    answer = testCodasLLM("samples/snack.m4a", "codas_policy.txt")
+    print("\nTest CODA with ollama\t =============")
+    print(answer)
 
     print("Finished.")
     
