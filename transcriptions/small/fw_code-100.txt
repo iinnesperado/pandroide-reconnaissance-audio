@@ -1,0 +1,1 @@
+ Donne un câlin qui trite dans le terminal une série de M9. L est en un chiffre de la mètre en paramètre par l'utilisateur.
