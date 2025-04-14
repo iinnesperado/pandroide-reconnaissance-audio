@@ -11,20 +11,20 @@ import numpy as np
 # All mentions of 'data' refer to : 
 #     - execution time
 #     - accuracy score
+# transcript and transcription are interchangeable
 
 # Audio processing stuff #
 
-def getText(audioPath, record):
+def getTranscript(audioPath, model_size, record):
     '''
     Fait la transcription du fichier audio donnée
     
     :param audioPath : str - path to audio file (m4a or mp3)
     :params record : bool - if True it writes the data into a file, else just prints it
-    :return text : str - transcription of the audio
-    :return execTime : float
+    :return transcript : str - transcription of the audio
     '''
 
-    model_size = "large-v3"
+    # model_size = "large-v3"
 
     # Run on GPU with FP16
     # model = WhisperModel(model_size, device="cuda", compute_type="float16")
@@ -39,38 +39,44 @@ def getText(audioPath, record):
     end1 = time.time()
     transcribe_t = end1 - start
 
-    text = ""
+    transcript = ""
     for segment in segments:
         # print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
-        text += segment.text
+        transcript += segment.text
 
     end2 = time.time()
     total_t = end2 - start
     if record:
-        saveData(audioPath, "exec_time", total_t)
+        directory = "data/" + model_size
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        saveData(audioPath, model_size + "/exec_time", total_t)
         # to plot a comparison of exec time of func transcribe and the time with saving text
-        file = open("data/comparison_exec_time.txt", "a")
+        file = open("data/" + model_size + "/comparison_exec_time.txt", "a")
         file.write("%.2f\t%.2f\n" % (transcribe_t, total_t))
         file.close()
     else :
         print("Transcription of audio '%s' took : %.2fs" % (getFileName(audioPath),total_t))
     
-    saveText(text,"transcriptions/fw_"+ getFileName(audioPath) + ".txt")
+    transcript_dir = "transcriptions/" + model_size
+    if not os.path.exists(transcript_dir):
+        os.makedirs(transcript_dir)
+    saveTranscript(transcript, transcript_dir + "/fw_"+ getFileName(audioPath) + ".txt")
 
-    return text
+    return transcript
 
-def saveText(text, filePath):
+def saveTranscript(transcript, filePath):
     '''
     Creates a file and saves the transcriptions of the audioPath done by faster-whisper
     as well as record the execution time into ecxec_time.txt file
     
-    :param text : str - content (text) to save into a file
+    :param transcript : str - content (stranscript) to save into a file
     :param filePath : str - file path to the file where the transcriptions will be saved
     :return void
     '''
 
     file = open(filePath, "w")
-    file.write(text)
+    file.write(transcript)
     file.close()
 
 def saveData(audioPath, dataType, data):
@@ -89,10 +95,10 @@ def saveData(audioPath, dataType, data):
     file.write(getFileName(audioPath) + "\t%.2f\n" % (data))
     file.close()
 
-def getScore(audioPath, og_file, record):
+def getScore(audioPath, og_file, model_size, record):
     '''
     Gives accuracy score to the transcription done by faster-wshiper out of 100.
-    Score = num of words missing in fw_text (compared to og_text)/ total words in og_text
+    Score = num of words missing in fw_transcript (compared to og_text)/ total words in og_text
     
     :params audioPath : str - path to audio file (m4a or mp3)
     :param  og_file : str - file path to transcription
@@ -100,14 +106,14 @@ def getScore(audioPath, og_file, record):
     :return score : float
     '''
     # Transcription faite par faster whisper
-    fw_file = "transcriptions/fw_"+getFileName(audioPath)+".txt"
+    fw_file = "transcriptions/" + model_size + "/fw_"+getFileName(audioPath)+".txt"
     fwFile = open(fw_file, "r")
     fw_read = fwFile.read()
     fwFile.close()
 
     # Transcription faites par nous utilisée comme référence
     if og_file==None:
-        og_file = "transcriptions/og_"+getFileName(audioPath)+".txt"
+        og_file = "transcriptions/original/og_"+getFileName(audioPath)+".txt"
     ogFile = open(og_file, "r")
     og_read = ogFile.read()
     ogFile.close()
@@ -131,7 +137,7 @@ def getScore(audioPath, og_file, record):
     
     score = ((total_mots - cpt)/total_mots)*100
     if record:
-        saveData(audioPath,"accuracy_score", score)
+        saveData(audioPath, model_size + "/accuracy_score", score)
     else : 
         # print("Mots manquants dans la transcription de fw :", missedWords)
         print("Score of audio transcriptions of '%s' : %d/%d = %.2f" % (getFileName(audioPath), (total_mots - cpt), total_mots, score))
@@ -139,7 +145,7 @@ def getScore(audioPath, og_file, record):
     return score
 
 
-def processAudio(audioPath, record=False):
+def processAudio(audioPath, fw_model, record=False):
     '''
     Takes an audio file, makes the transcription with faster-whisper, saves the
     transcription into a file and gives it a score that is saved into accuracy_score.txt file
@@ -148,11 +154,11 @@ def processAudio(audioPath, record=False):
     :params record : bool - if True it writes the data into a file, else just prints it on the terminal
     :return void
     '''
-    getText(audioPath, record)
-    getScore(audioPath, None, record)
+    getTranscript(audioPath, fw_model, record)
+    getScore(audioPath, None, fw_model, record)
     print("Finished avualiting : '%s'" % getFileName(audioPath))
 
-def processAudiowNoise(audioPath, record=False):
+def processAudiowNoise(audioPath, fw_model, record=False):
     '''
     Takes an audio file with voice percentage, makes the transcription with faster-whisper, saves the
     transcription into a file and gives it a score that is saved into accuracy_score.txt file
@@ -161,14 +167,14 @@ def processAudiowNoise(audioPath, record=False):
     :params record : bool - if True it writes the data into a file, else just prints it on the terminal
     :return void
     '''
-    getText(audioPath, record)
+    getTranscript(audioPath, fw_model, record)
     name = re.split(r"[-/.]",audioPath)[-3]
-    og_file = "transcriptions/og_" + name +".txt"
-    getScore(audioPath, og_file, record=True)
+    og_file = "transcriptions/original/og_" + name +".txt"
+    getScore(audioPath, og_file, fw_model, record=True)
     print("Finished avualiting : '%s'" % getFileName(audioPath))
 
 
-def processAllAudio(directory = "samples"):
+def processAllAudio(fw_model, directory = "samples"):
     '''
     Processes of all the audio files found in 'directory', the data would be automatically be 
     recorded into the files 'exec_time.txt' and 'accuracy_score.txt'
@@ -176,24 +182,25 @@ def processAllAudio(directory = "samples"):
     :params directory : str - directory path where the audio files are located
     :return void
     '''
-    if os.path.exists("data/exec_time.txt") :
-        os.remove("data/exec_time.txt")
-    if os.path.exists("data/comparison_exec_time.txt") :
-        os.remove("data/comparison_exec_time.txt")
-    if os.path.exists("data/accuracy_score.txt"):
-        os.remove("data/accuracy_score.txt")
+    data_dir = "data/" + fw_model
+    if os.path.exists(data_dir + "/exec_time.txt") :
+        os.remove(data_dir + "/exec_time.txt")
+    if os.path.exists(data_dir + "/comparison_exec_time.txt") :
+        os.remove(data_dir + "/comparison_exec_time.txt")
+    if os.path.exists(data_dir + "/accuracy_score.txt"):
+        os.remove(data_dir + "/accuracy_score.txt")
 
     files = glob.glob(directory + "/*.m4a") + glob.glob(directory + "/*.mp3")
     for audioPath in files :
-        processAudio(audioPath, record=True)
+        processAudio(audioPath, fw_model, record=True)
     
     files = glob.glob("samples/withNoise/*.mp3")
     for audioNoise in files:
-        processAudiowNoise(audioNoise, record=True)
+        processAudiowNoise(audioNoise, fw_model, record=True)
 
 def getFileName(filePath):
     '''
-    Returns the name of the audio file (without noise)
+    Returns the name of the audio file (with noise level indicator)
     '''
     return re.split(r"[/.]",filePath)[-2]
 
@@ -210,7 +217,7 @@ def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
     :returns answer : str - answer of the llm
     '''
 
-    command = getText(audioPath, record=False)
+    command = getTranscript(audioPath, record=False)
     file = open("coda.txt", "r")
     capabilities = file.read()
 
@@ -232,6 +239,7 @@ def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
 # Plotting stuff #
 
 def plotScore():
+    # TODO modify to take into account fw model
     score = {noise : [] for noise in range(0, 101, 10)}
     
     withNoise = glob.glob("samples/withNoise/*.mp3")
@@ -239,7 +247,7 @@ def plotScore():
     for f in withNoise:
         noise = int(re.split(r"[-/.]",f)[-2])
         name = re.split(r"[-/.]",f)[-3]
-        og_file = "transcriptions/og_" + name +".txt"
+        og_file = "transcriptions/original/og_" + name +".txt"
         currentScore = getScore(f, og_file, record=False)
         score[noise].append(round(currentScore,2))
 
@@ -248,7 +256,7 @@ def plotScore():
 
     for name in noNoise:
         audioPath = "samples/"+ name +".m4a"
-        og_file = "transcriptions/og_"+ name+".txt"
+        og_file = "transcriptions/original/og_"+ name+".txt"
         currentScore = getScore(audioPath,og_file, record=False)
         score[0].append(round(currentScore, 2))
 
@@ -275,6 +283,7 @@ def plotScore():
     # plt.show()
 
 def plotTimeComp():
+    # TODO modify to take into account fw model
     data = np.loadtxt("data/comparison_exec_time.txt")
     transcribe_t = [t[0] for t in data]
     total_t = [t[1] for t in data]
@@ -291,15 +300,17 @@ def plotTimeComp():
 # MAIN #
 
 def main():
-    # Processes only one audio file, predetermined to have record = False to not polluate the data files, 
-    # it will then print the result in the terminal
-    # processAudio("samples/assignment.m4a")
+    # Processes only one audio file, predetermined to have record = False to not polluate the data files, will print data in terminal
+    # fw_model_size = "tiny"
+    fw_model_size = "small"
+    # fw_model_size = "large-v3"
+    # processAudio("samples/assignment.m4a", fw_model_size)
     # processAudio("samples/withNoise/calcul_coffee10.mp3")
 
     # Processes all the files in 'samples' directory
-    # processAllAudio("samples")
+    processAllAudio(fw_model_size)
 
-    # getText("samples/juin.m4a", record=False)
+    # getTranscript("samples/juin.m4a", record=False)
 
     # Plotting data
     # plotScore()
@@ -307,9 +318,9 @@ def main():
     # plt.show()
 
     # Test CODA's Policy
-    answer = testCodasLLM("samples/snack.m4a", "codas_policy.txt")
-    print("\nTest CODA with ollama\t =============")
-    print(answer)
+    # answer = testCodasLLM("samples/snack.m4a", "codas_policy.txt")
+    # print("\nTest CODA with ollama\t =============")
+    # print(answer)
 
     print("Finished.")
     
