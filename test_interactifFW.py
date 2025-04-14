@@ -3,11 +3,20 @@ import re
 import threading
 import time
 from typing import Dict, List
+import keyboard
+from speech2LLM import getText
+import wave
 
 import numpy as np
 import pyaudio
 from faster_whisper import WhisperModel
 
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
+CHUNK = 1024
+FILENAME = "recorded_audio.wav"
+"""
 # Yeah I could do this config with argparse, but I won't...
 
 # Audio settings
@@ -36,28 +45,29 @@ whisper = WhisperModel("small", device="cpu", compute_type="int8", cpu_threads=W
 
 
 def producer_thread():
-    audio = pyaudio.PyAudio()
-    stream = audio.open(
-        format=pyaudio.paInt16,
-        channels=NB_CHANNELS,
-        rate=RATE,
-        input=True,
-        frames_per_buffer=CHUNK,    # 1 second of audio
-    )
+    if keyboard.is_pressed("q"):
+        audio = pyaudio.PyAudio()
+        stream = audio.open(
+            format=pyaudio.paInt16,
+            channels=NB_CHANNELS,
+            rate=RATE,
+            input=True,
+            frames_per_buffer=CHUNK,    # 1 second of audio
+        )
 
-    print("-" * 80)
-    print("Microphone initialized, recording started...")
-    print("-" * 80)
-    print("TRANSCRIPTION")
-    print("-" * 80)
+        print("-" * 80)
+        print("Microphone initialized, recording started...")
+        print("-" * 80)
+        print("TRANSCRIPTION")
+        print("-" * 80)
 
-    while True:
-        audio_data = b""
-        for _ in range(STEP_IN_SEC):
-            chunk = stream.read(RATE)    # Read 1 second of audio data
-            audio_data += chunk
+        while True:
+            audio_data = b""
+            for _ in range(STEP_IN_SEC):
+                chunk = stream.read(RATE)    # Read 1 second of audio data
+                audio_data += chunk
 
-        audio_queue.put(audio_data)    # Put the 5-second audio data into the queue
+            audio_queue.put(audio_data)    # Put the 5-second audio data into the queue
 
 
 # Thread which gets items from the queue and prints its length
@@ -115,6 +125,8 @@ def consumer_thread(stats):
 if __name__ == "__main__":
     stats: Dict[str, List[float]] = {"overall": [], "transcription": [], "postprocessing": []}
 
+
+
     producer = threading.Thread(target=producer_thread)
     producer.start()
 
@@ -137,3 +149,122 @@ if __name__ == "__main__":
         )
         # We need to add the step_in_sec to the latency as we need to wait for that chunk of audio
         print(f"The average latency is {np.mean(stats['overall'])+STEP_IN_SEC:.4f}s")
+"""
+
+# version avec enresgistrement audio
+def record_audio():
+    is_recording = False
+    frames = []
+
+    p = pyaudio.PyAudio()
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK)
+
+    print("Appuie sur 'b' pour démarrer/arrêter l'enregistrement...")
+
+    while True:
+        if is_recording:
+            data = stream.read(CHUNK)
+            frames.append(data)
+
+        if keyboard.is_pressed('b'):
+            is_recording = not is_recording
+            if is_recording:
+                print(" Enregistrement démarré...")
+                frames = []
+            else:
+                print("Enregistrement terminé.")
+                break
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    # Save WAV file
+    wf = wave.open(FILENAME, 'wb')
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(frames))
+    wf.close()
+
+    print(f"Fichier sauvegardé : {FILENAME}")
+    return FILENAME
+
+
+
+# Config audio
+FORMAT = pyaudio.paInt16
+
+is_recording = False
+
+# Choose the whisper model
+model = WhisperModel("large-v3", device="cpu", compute_type="int8")
+
+def listen_keyboard():
+    global is_recording
+    print("Press 'b' to start/stop the transcription (Ctrl+C to quit).")
+    while True:
+        if keyboard.is_pressed('b'):
+            is_recording = not is_recording
+            if is_recording:
+                print("Start of the transcription")
+            else:
+                print("End of the transcription")
+
+def audio_stream():
+    global is_recording
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK)
+
+    buffer = []
+
+    try:
+        while True:
+            data = stream.read(CHUNK, exception_on_overflow=False)
+            if is_recording:
+                buffer.append(data)
+
+                # If we reach 1 second of audio
+                if len(buffer) * CHUNK >= RATE:
+                    audio_bytes = b''.join(buffer)
+                    buffer = []
+
+                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 255.0
+
+                    # Transcription
+                    segments, _ = model.transcribe(audio_array,
+                                                   beam_size=5,
+                                                   vad_filter=True,
+                                                   vad_parameters=dict(min_silence_duration_ms=500))
+
+                    transcription = " ".join([s.text for s in segments])
+                    # remove anything from the text which is between () or [] --> these are non-verbal background noises/music/etc.
+                    transcription = re.sub(r"\[.*\]", "", transcription)
+                    transcription = re.sub(r"\(.*\)", "", transcription)
+
+                    if transcription.strip():
+                        print(f"Transcription {transcription}")
+            else:
+                buffer = []
+            time.sleep(0.01)  # Pause to avoid CPU saturation
+
+    except KeyboardInterrupt:
+        print("\nInterruption by the user")
+    finally:
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+
+if __name__ == "__main__":
+    threading.Thread(target=listen_keyboard, daemon=True).start()
+    audio_stream()
