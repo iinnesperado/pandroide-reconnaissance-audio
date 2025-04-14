@@ -1,1 +1,0 @@
- Choisis un nombre, multiplie-le par lui-même et au résultat, enlève-le d'eux. Qu'est-ce que tu obtiens ?
