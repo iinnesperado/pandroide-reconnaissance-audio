@@ -1,0 +1,1 @@
+ D'un coup de patron qui printe dans la terminal une série de énormes, elle est en un chiffre donné en parametre par l'utilisateur.

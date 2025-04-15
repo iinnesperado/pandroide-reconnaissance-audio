@@ -1,0 +1,1 @@
+ Donne un cotepiton qui printe dans le terminal une série de N-N-M. N est en un chiffre donné en paramètre par l'utilisateur.

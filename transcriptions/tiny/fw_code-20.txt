@@ -1,0 +1,1 @@
+ Donne un coup de puton qui printe dans le terminal une série de énorme. Elle est en un chiffre donné en paramètre par le utilisateur.

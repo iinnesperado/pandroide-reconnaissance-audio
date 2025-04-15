@@ -1,0 +1,1 @@
+ Donne un cotepiton qui printe dans le terminal une série de noms, n est en un chiffre donnée en paramètre par l'utilisateur.
