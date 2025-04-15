@@ -212,8 +212,8 @@ def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
     Takes a audio file and inputs the trasncription done by faster-whisper to the chat to ollama with the 
     predeterminated model 'llama3.2:3b'
 
-    :params content : - str : content given to the llm 
-    :parans model : str - model name of the llm to be used to process the msg
+    :params audioPath : str - content given to the llm 
+    :params model : str - model name of the llm to be used to process the msg
     :returns answer : str - answer of the llm
     '''
 
@@ -238,61 +238,70 @@ def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
 
 # Plotting stuff #
 
-def plotScore():
+def plotScore(models):
+    '''
+    :param models : list of str of models sizes that are gonna be plotted
+    '''
     # TODO modify to take into account fw model
-    score = {noise : [] for noise in range(0, 101, 10)}
+    # scores = {noise : [] for noise in range(0, 101, 10)}
+    results = {mod : {noise : [] for noise in range(0, 101, 10)} for mod in models}
+
+    # Plot definition
+    plt.figure(figsize=(10,7))
+    xvalues = range(0,101,10)
+    plt.title("Score median by noise percentage\n A comparison by model size of Faster-Whisper")
+    plt.xlabel("Percentage of noise volume")
+    plt.ylabel("Transcription score out of 100")
     
     withNoise = glob.glob("samples/withNoise/*.mp3")
     noNoise = []
-    for f in withNoise:
-        noise = int(re.split(r"[-/.]",f)[-2])
-        name = re.split(r"[-/.]",f)[-3]
-        og_file = "transcriptions/original/og_" + name +".txt"
-        currentScore = getScore(f, og_file, record=False)
-        score[noise].append(round(currentScore,2))
+    for model in models: 
+        for f in withNoise:
+            noise = int(re.split(r"[-/.]",f)[-2])
+            name = re.split(r"[-/.]",f)[-3]
+            og_file = "transcriptions/original/og_" + name +".txt"
+            currentScore = getScore(f, og_file, model, record=False)
+            results[model][noise].append(round(currentScore,2))
 
-        if name not in noNoise :
-            noNoise.append(name)
+            if name not in noNoise :
+                noNoise.append(name)
 
-    for name in noNoise:
-        audioPath = "samples/"+ name +".m4a"
-        og_file = "transcriptions/original/og_"+ name+".txt"
-        currentScore = getScore(audioPath,og_file, record=False)
-        score[0].append(round(currentScore, 2))
+        for name in noNoise:
+            audioPath = "samples/"+ name +".m4a"
+            og_file = "transcriptions/original/og_"+ name+".txt"
+            currentScore = getScore(audioPath,og_file, model, record=False)
+            results[model][0].append(round(currentScore, 2))
 
-    print(score)
-
-    data = []
-    q1 = []
-    q3 = []
-    for i in range(0, 101, 10):
-        data.append(np.mean(score[i]))
-        q1.append(np.quantile(score[i],0.25))
-        q3.append(np.quantile(score[i],0.75))
-
-
-    # Plot
-    plt.figure(figsize=(7,7))
-    xvalues = range(0,101,10)
-    plt.title("Score mean by noise percentage")
-    plt.xlabel("Percentage of noise volume")
-    plt.ylabel("Transcription score out of 100")
-    plt.plot(xvalues, data, marker='o', linestyle='-')
-    plt.fill_between(xvalues, q1, q3, alpha = 0.2)
+        # Creating plot data 
+        data = []
+        q1 = []
+        q3 = []
+        for i in range(0, 101, 10):
+            data.append(np.median(results[model][i]))
+            q1.append(np.quantile(results[model][i],0.25))
+            q3.append(np.quantile(results[model][i],0.75))
+        
+        plt.plot(xvalues, data, marker='o', linestyle='-', label=model)
+        plt.fill_between(xvalues, q1, q3, alpha = 0.2)
+    
+    plt.legend()
     plt.grid(True, alpha=0.2)
     # plt.show()
 
-def plotTimeComp():
+def plotTimeComp(models):
     # TODO modify to take into account fw model
-    data = np.loadtxt("data/comparison_exec_time.txt")
-    transcribe_t = [t[0] for t in data]
-    total_t = [t[1] for t in data]
-    
     plt.figure(figsize=(7,7))
-    plt.scatter(transcribe_t, total_t, alpha=0.4)
+    for model in models:
+        data = np.loadtxt("data/" + model + "/comparison_exec_time.txt")
+        transcribe_t = [t[0] for t in data]
+        total_t = [t[1] for t in data]
+        plt.scatter(transcribe_t, total_t, alpha=0.4, label = model)
+
+    
     plt.title("Rapport of execution time")
     plt.xlabel("Transcribe time (s)")
     plt.ylabel("Total time (s)")
+    plt.legend()
     plt.grid(True, alpha=0.3)
     # plt.show()
 
@@ -302,20 +311,23 @@ def plotTimeComp():
 def main():
     # Processes only one audio file, predetermined to have record = False to not polluate the data files, will print data in terminal
     # fw_model_size = "tiny"
-    fw_model_size = "small"
+    # fw_model_size = "small"
+    fw_model_size = "medium"
     # fw_model_size = "large-v3"
     # processAudio("samples/assignment.m4a", fw_model_size)
     # processAudio("samples/withNoise/calcul_coffee10.mp3")
 
     # Processes all the files in 'samples' directory
-    processAllAudio(fw_model_size)
+    # processAllAudio(fw_model_size)
 
     # getTranscript("samples/juin.m4a", record=False)
 
     # Plotting data
-    # plotScore()
-    # plotTimeComp()
-    # plt.show()
+    models = ["tiny", "small", "medium", "large-v3"]
+    # models = ["medium", "large-v3"]
+    plotScore(models)
+    plotTimeComp(models)
+    plt.show()
 
     # Test CODA's Policy
     # answer = testCodasLLM("samples/snack.m4a", "codas_policy.txt")
