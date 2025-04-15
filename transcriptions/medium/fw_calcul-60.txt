@@ -1,0 +1,1 @@
+ Choisis un nombre, multiplie-le par le nombre, et le résultat en les fournit deux. Qu'est-ce que tu obtiens ?
