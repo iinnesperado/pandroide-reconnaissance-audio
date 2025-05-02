@@ -3,8 +3,9 @@ import re
 import threading
 import time
 from typing import Dict, List
-import keyboard
-from speech2LLM import getText
+# import keyboard
+from pynput.keyboard import Key, Listener
+from speech2LLM import getTranscript
 import wave
 
 import numpy as np
@@ -165,19 +166,28 @@ def record_audio():
 
     print("Appuie sur 'b' pour démarrer/arrêter l'enregistrement...")
 
-    while True:
-        if is_recording:
-            data = stream.read(CHUNK)
-            frames.append(data)
+    # while True:
+    #     if is_recording:
+    #         data = stream.read(CHUNK)
+    #         frames.append(data)
 
-        if keyboard.is_pressed('b'):
-            is_recording = not is_recording
+    #     if keyboard.is_pressed('b'):
+    #         is_recording = not is_recording
+    #         if is_recording:
+    #             print(" Enregistrement démarré...")
+    #             frames = []
+    #         else:
+    #             print("Enregistrement terminé.")
+    #             break
+
+    with Listener(on_press=on_press, on_release=on_release) as listener :
+        while is_recording or not frames : # Continue until we have recorded smth or stopped
             if is_recording:
-                print(" Enregistrement démarré...")
-                frames = []
-            else:
-                print("Enregistrement terminé.")
-                break
+                data = stream.read(CHUNK)
+                frames.append(data)
+            time.sleep(0.01)
+        listener.join()
+
 
     stream.stop_stream()
     stream.close()
@@ -202,18 +212,43 @@ FORMAT = pyaudio.paInt16
 is_recording = False
 
 # Choose the whisper model
-model = WhisperModel("large-v3", device="cpu", compute_type="int8")
+model = WhisperModel("medium", device="cpu", compute_type="int8")
+
+# def listen_keyboard():
+#     global is_recording
+#     print("Press 'b' to start/stop the transcription (Ctrl+C to quit).")
+#     while True:
+#         if keyboard.is_pressed('b'):
+#             is_recording = not is_recording
+#             if is_recording:
+#                 print("Start of the transcription")
+#             else:
+#                 print("End of the transcription")
+#             time.sleep(0.2)
 
 def listen_keyboard():
     global is_recording
     print("Press 'b' to start/stop the transcription (Ctrl+C to quit).")
-    while True:
-        if keyboard.is_pressed('b'):
+    with Listener(on_press=on_press, on_release=on_release) as listener:
+        listener.join()
+
+def on_press(key):
+    global is_recording
+    try :
+        if key.char == 'b' :
             is_recording = not is_recording
-            if is_recording:
+            if is_recording :
                 print("Start of the transcription")
-            else:
+            else :
                 print("End of the transcription")
+            time.sleep(0.2)
+    except AttributeError:
+        # for special keys (like ctr, alt, etc) since they don't have char attr
+        pass
+
+def on_release(key):
+    if key == Key.esc :
+        return False
 
 def audio_stream():
     global is_recording
@@ -226,6 +261,7 @@ def audio_stream():
                     frames_per_buffer=CHUNK)
 
     buffer = []
+    audio_threshold = RATE # 1 second of audio
 
     try:
         while True:
@@ -234,11 +270,13 @@ def audio_stream():
                 buffer.append(data)
 
                 # If we reach 1 second of audio
-                if len(buffer) * CHUNK >= RATE:
+                buffer_size = len(buffer) * CHUNK
+                if buffer_size >= audio_threshold:
                     audio_bytes = b''.join(buffer)
-                    buffer = []
+                    # buffer = []
 
-                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 255.0
+                    # audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 255.0
+                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768
 
                     # Transcription
                     segments, _ = model.transcribe(audio_array,
@@ -248,11 +286,13 @@ def audio_stream():
 
                     transcription = " ".join([s.text for s in segments])
                     # remove anything from the text which is between () or [] --> these are non-verbal background noises/music/etc.
-                    transcription = re.sub(r"\[.*\]", "", transcription)
+                    transcription = re.sub(r"\[.*?\]", "", transcription)
                     transcription = re.sub(r"\(.*\)", "", transcription)
 
                     if transcription.strip():
                         print(f"Transcription {transcription}")
+                    else :
+                        buffer = []
             else:
                 buffer = []
             time.sleep(0.01)  # Pause to avoid CPU saturation
