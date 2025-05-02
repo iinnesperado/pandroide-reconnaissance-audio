@@ -1,0 +1,1 @@
+ Choisi un nombre, multiplie-le par lui-même et au résultat en l'évouillent de « Qu'est-ce que tu obtiens ? »
