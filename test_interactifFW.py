@@ -163,7 +163,7 @@ def record_audio():
                     input=True,
                     frames_per_buffer=CHUNK)
 
-    print("Appuie sur 'b' pour démarrer/arrêter l'enregistrement...")
+    print("Press 'b' to start/stop the record")
 
     while True:
         if is_recording:
@@ -173,11 +173,13 @@ def record_audio():
         if keyboard.is_pressed('b'):
             is_recording = not is_recording
             if is_recording:
-                print(" Enregistrement démarré...")
+                print(" Start of the recording")
                 frames = []
             else:
-                print("Enregistrement terminé.")
+                print("End of the recording")
                 break
+            while keyboard.is_pressed('b'):  # avoid multiple toggles
+                pass
 
     stream.stop_stream()
     stream.close()
@@ -195,7 +197,7 @@ def record_audio():
     return FILENAME
 
 
-
+"""
 # Config audio
 FORMAT = pyaudio.paInt16
 
@@ -263,8 +265,11 @@ def audio_stream():
         stream.stop_stream()
         stream.close()
         p.terminate()
-
+"""
 
 if __name__ == "__main__":
-    threading.Thread(target=listen_keyboard, daemon=True).start()
-    audio_stream()
+    #threading.Thread(target=listen_keyboard, daemon=True).start()
+    #audio_stream()
+    audio = record_audio()
+    print(getText(audio,False))
+
