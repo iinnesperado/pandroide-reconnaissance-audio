@@ -1,0 +1,1 @@
+ J'ai un nombre, multiplie-le par lui-même et en résultat, on l'est voulu de. Qu'est-ce que tu occuens ?

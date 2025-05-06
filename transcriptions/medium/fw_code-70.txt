@@ -1,0 +1,1 @@
+ Donne un code Python qu'il printe dans le terminal une série de N nombres, N étant un chiffre donné en paramètres par l'utilisateur.

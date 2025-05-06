@@ -1,0 +1,1 @@
+ D'un un coup d'autant qui printe dans la terminal une série de énorme, elle est un chiffre donné on paramede par l'utilisateur.

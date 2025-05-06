@@ -1,0 +1,1 @@
+ Choisis un nombre, multiplie le par le même et au résultat en les fourri deux. Qu'est-ce que tu obtiens ?
