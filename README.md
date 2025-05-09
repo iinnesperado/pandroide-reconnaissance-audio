@@ -3,12 +3,31 @@ Projet réalisé dans le cadre du M1 Androide (AI2D)
 
 **Sujet :** Reconnaissance audio par des modèles de fondation pour un robot manipulateur mobile.
 
-Les details du sujet sont dans le lien suivant : https://androide.lip6.fr/node/743
+## Fonctionnalités
+Ce projet implémente un sistème de reconnaissance vocale en utilisant des modèles de LLM. Le système :
+- Trascrit la parole en utilisant les modèles Faster-Whisper
+- Traite les commandes via un LLM
 
-**Encadrants :** Stephane DONCIEUX et Emiland GARRABE 
+## Structure ?
 
-**Étudiants :** Inès RAHAOUI et Inés Tian RUIZ-BRAVO PLOVINS
+## Utilisation
 
-Outils:
-- faster whisper (https://github.com/SYSTRAN/faster-whisper)
-- ollama 
+## Dépendances
+- fastwe-whisper
+- ollama
+- pyaudio
+- numpy
+- matplotlib
+
+## Contributeurs 
+- Ines RAHAOUI
+- Inés Tian Ruiz-Bravo Plovins
+
+## Encadrants
+- Stéphane DONCIEUX
+- Emiland GARRABE
+
+## Liens utiles
+- [Détails du projet](https://androide.lip6.fr/node/743)
+- [Faster Whisper](https://github.com/SYSTRAN/faster-whisper)
+- [Ollama](https://github.com/ollama/ollama)

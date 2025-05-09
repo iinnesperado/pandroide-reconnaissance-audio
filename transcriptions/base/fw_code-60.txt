@@ -1,0 +1,1 @@
+ Donne un code qui prie dans le terminal une série de NNOM. Elle est en chief pour donner un parametre à l'utilisateur.
