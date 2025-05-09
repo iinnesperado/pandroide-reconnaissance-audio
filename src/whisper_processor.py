@@ -19,9 +19,13 @@ def getTranscript(audioPath, model_size, record):
     '''
     Fait la transcription du fichier audio donnée
     
-    :param audioPath : str - path to audio file (m4a or mp3)
-    :params record : bool - if True it writes the data into a file, else just prints it
-    :return transcript : str - transcription of the audio
+    Args:
+        audioPath : str - path to audio file (m4a or mp3)
+        record : bool - if True it writes the data into a file, else just prints it
+    
+    Returns:
+        transcript : str - transcription of the audio
+    
     '''
 
     # model_size = "large-v3"
@@ -70,9 +74,9 @@ def saveTranscript(transcript, filePath):
     Creates a file and saves the transcriptions of the audioPath done by faster-whisper
     as well as record the execution time into ecxec_time.txt file
     
-    :param transcript : str - content (stranscript) to save into a file
-    :param filePath : str - file path to the file where the transcriptions will be saved
-    :return void
+    Args:
+        transcript : str - content (stranscript) to save into a file
+        filePath : str - file path to the file where the transcriptions will be saved
     '''
 
     file = open(filePath, "w")
@@ -83,10 +87,10 @@ def saveData(audioPath, dataType, data):
     '''
     Saves the data (execution time or score) into a file in the directory 'data'
 
-    :params audioPath : str - reference to know to wich audio file the data is from
-    :params dataType : str - name of the file where the data is going to be saved
-    :params data : float - the data to save
-    :return void
+    Args:
+        audioPath : str - reference to know to wich audio file the data is from
+        dataType : str - name of the file where the data is going to be saved
+        data : float - the data to save
     '''
     try:
         file = open("data/" + dataType + ".txt", "a")
@@ -100,10 +104,14 @@ def getScore(audioPath, og_file, model_size, record):
     Gives accuracy score to the transcription done by faster-wshiper out of 100.
     Score = num of words missing in fw_transcript (compared to og_text)/ total words in og_text
     
-    :params audioPath : str - path to audio file (m4a or mp3)
-    :param  og_file : str - file path to transcription
-    :params record : bool - if True it writes the data into a file, else just prints it
-    :return score : float
+    Args:
+        audioPath : str - path to audio file (m4a or mp3)
+        og_file : str - file path to transcription
+        model_size : str - name of the model used to process the audio files
+        record : bool - if True it writes the data into a file, else just prints it
+    
+    Returns:
+        score : float
     '''
     # Transcription faite par faster whisper
     fw_file = "transcriptions/" + model_size + "/fw_"+getFileName(audioPath)+".txt"
@@ -150,9 +158,10 @@ def processAudio(audioPath, fw_model, record=False):
     Takes an audio file, makes the transcription with faster-whisper, saves the
     transcription into a file and gives it a score that is saved into accuracy_score.txt file
 
-    :params audioPath : str - file path of the audio file to process
-    :params record : bool - if True it writes the data into a file, else just prints it on the terminal
-    :return void
+    Args:
+        audioPath : str - file path of the audio file to process
+        fw_model : str - name of the model used to process the audio files
+        record : bool - if True it writes the data into a file, else just prints it on the terminal
     '''
     getTranscript(audioPath, fw_model, record)
     getScore(audioPath, None, fw_model, record)
@@ -163,9 +172,10 @@ def processAudiowNoise(audioPath, fw_model, record=False):
     Takes an audio file with voice percentage, makes the transcription with faster-whisper, saves the
     transcription into a file and gives it a score that is saved into accuracy_score.txt file
 
-    :params audioPath : str - file path of the audio file to process
-    :params record : bool - if True it writes the data into a file, else just prints it on the terminal
-    :return void
+    Args:
+        audioPath : str - file path of the audio file to process
+        fw_model : str - name of the model used to process the audio files
+        record : bool - if True it writes the data into a file, else just prints it on the terminal
     '''
     getTranscript(audioPath, fw_model, record)
     name = re.split(r"[-/.]",audioPath)[-3]
@@ -179,8 +189,9 @@ def processAllAudio(fw_model, directory = "samples"):
     Processes of all the audio files found in 'directory', the data would be automatically be 
     recorded into the files 'exec_time.txt' and 'accuracy_score.txt'
 
-    :params directory : str - directory path where the audio files are located
-    :return void
+    Args:
+        fw_model : str - name of the model used to process the audio files
+        directory : str - directory path where the audio files are located
     '''
     data_dir = "data/" + fw_model
     if os.path.exists(data_dir + "/exec_time.txt") :
@@ -205,51 +216,20 @@ def getFileName(filePath):
     return re.split(r"[/.]",filePath)[-2]
 
 
-# LLM processing stuff #
-
-def testCodasLLM(audioPath, policy, model = "llama3.2:3b"):
-    '''
-    Takes a audio file and inputs the trasncription done by faster-whisper to the chat to ollama with the 
-    predeterminated model 'llama3.2:3b'
-
-    :params audioPath : str - content given to the llm 
-    :params model : str - model name of the llm to be used to process the msg
-    :returns answer : str - answer of the llm
-    '''
-
-    command = getTranscript(audioPath, record=False)
-    file = open("coda.txt", "r")
-    capabilities = file.read()
-
-    messages = [
-        {
-            'role' : 'user',
-            'content' : f'You are a robot controlled by the following Python class (your CODA policy):  {capabilities} '
-                f'Command "{command}". '
-                'What action(s) do you take? Respond with only the necessary function calls in Python-like syntax.',
-                # "If you don't understant the user you can ask for clarifications, and specifying what needs to be clarified.",
-        },
-    ]
-
-    response = chat(model, messages=messages)
-    answer = response['message']['content']
-    return answer
-
-
 # Plotting stuff #
 
 def plotScore(models):
     '''
-    :param models : list of str of models sizes that are gonna be plotted
+    Args:
+        models : list of str of models sizes that are gonna be plotted
     '''
-    # TODO modify to take into account fw model
     # scores = {noise : [] for noise in range(0, 101, 10)}
     results = {mod : {noise : [] for noise in range(0, 101, 10)} for mod in models}
 
     # Plot definition
     plt.figure(figsize=(10,7))
     xvalues = range(0,101,10)
-    plt.title("Score median by noise percentage\n A comparison by model size of Faster-Whisper")
+    plt.title("Score median by noise percentage")
     plt.xlabel("Percentage of noise volume")
     plt.ylabel("Transcription score out of 100")
     
@@ -306,7 +286,6 @@ def plotTimeComp(models):
     plt.grid(True, alpha=0.3)
     # plt.show()
 
-
 # MAIN #
 
 def main():
@@ -316,7 +295,7 @@ def main():
     fw_model_size = "medium"
     # fw_model_size = "large-v3"
     # processAudio("samples/assignment.m4a", fw_model_size)
-    # processAudio("samples/withNoise/calcul_coffee10.mp3")
+    # processAudio("samples/withNoise/calcul-10.mp3")
 
     # Processes all the files in 'samples' directory
     # processAllAudio(fw_model_size)
@@ -325,15 +304,11 @@ def main():
 
     # Plotting data
     # models = ["tiny", "small", "medium", "large-v3"]
-    models = ["medium", "large-v3"]
+    # models = ["small", "large-v3"]
+    models = ["large-v3"]
     plotScore(models)
     plotTimeComp(models)
     plt.show()
-
-    # Test CODA's Policy
-    # answer = testCodasLLM("samples/snack.m4a", "codas_policy.txt")
-    # print("\nTest CODA with ollama\t =============")
-    # print(answer)
 
     print("Finished.")
     

@@ -4,7 +4,7 @@ import threading
 import time
 from typing import Dict, List
 import keyboard
-from speech2LLM import getTranscript
+from whisper_processor import getTranscript
 import wave
 
 import numpy as np

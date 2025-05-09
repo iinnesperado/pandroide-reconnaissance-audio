@@ -2,7 +2,7 @@ import wave
 import pyaudio
 import threading
 from pynput import keyboard
-from speech2LLM import getTranscript
+from whisper_processor import getTranscript
 
 # Audio configuration
 FORMAT = pyaudio.paInt16
@@ -17,25 +17,28 @@ stop_recording = False
 frames = []
 
 def on_press(key):
+    ''' Gère les événements de pression de touche. '''
     global is_recording, stop_recording, frames
 
     try:
         if key.char == 'b':
             is_recording = not is_recording
             if is_recording:
-                print("🔴 Début de l'enregistrement.")
+                print("Début de l'enregistrement.")
                 frames = []
             else:
-                print("⏹️ Fin de l'enregistrement.")
+                print("Fin de l'enregistrement.")
                 stop_recording = True  # Indique à la boucle d'arrêter
     except AttributeError:
         pass  # Ignore les touches spéciales
 
 def start_listener():
+    ''' Démarre un listener pour les événements du clavier. '''
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
 def record_audio():
+    ''' Enregistre l'audio à partir du microphone et le sauvegarde dans un fichier WAV. '''
     global is_recording, stop_recording, frames
 
     p = pyaudio.PyAudio()
@@ -53,7 +56,7 @@ def record_audio():
                 data = stream.read(CHUNK, exception_on_overflow=False)
                 frames.append(data)
     except KeyboardInterrupt:
-        print("⛔ Interruption manuelle.")
+        print("Interruption manuelle.")
     finally:
         stream.stop_stream()
         stream.close()
@@ -67,10 +70,10 @@ def record_audio():
             wf.writeframes(b''.join(frames))
             wf.close()
 
-            print(f"💾 Fichier sauvegardé : {FILENAME}")
+            print(f"Fichier sauvegardé : {FILENAME}")
             return FILENAME
         else:
-            print("⚠️ Aucun enregistrement effectué.")
+            print("Aucun enregistrement effectué.")
             return None
 
 if __name__ == "__main__":
