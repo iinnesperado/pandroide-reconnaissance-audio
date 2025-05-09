@@ -21,6 +21,7 @@ def getTranscript(audioPath, model_size, record):
     
     Args:
         audioPath : str - path to audio file (m4a or mp3)
+        model_size : str - name of the model used to process the audio files
         record : bool - if True it writes the data into a file, else just prints it
     
     Returns:
@@ -229,9 +230,10 @@ def plotScore(models):
     # Plot definition
     plt.figure(figsize=(10,7))
     xvalues = range(0,101,10)
-    plt.title("Score median by noise percentage")
-    plt.xlabel("Percentage of noise volume")
-    plt.ylabel("Transcription score out of 100")
+    # plt.title("Score median by noise percentage")
+    plt.title("Score median by noise percentage\nA comparison by model size of Faster-Whisper")
+    plt.xlabel("Noise level (%)")
+    plt.ylabel("Transcription score (%)")
     
     withNoise = glob.glob("samples/withNoise/*.mp3")
     noNoise = []
@@ -257,7 +259,7 @@ def plotScore(models):
         q1 = []
         q3 = []
         for i in range(0, 101, 10):
-            data.append(np.median(results[model][i]))
+            data.append(np.mean(results[model][i]))
             q1.append(np.quantile(results[model][i],0.25))
             q3.append(np.quantile(results[model][i],0.75))
         
@@ -269,46 +271,56 @@ def plotScore(models):
     plt.grid(True, alpha=0.2)
     # plt.show()
 
-def plotTimeComp(models):
-    '''Scatter plot of the execution time, ratio between total time of the method getTranscription and only the transcribe'''
-    plt.figure(figsize=(7,7))
-    for model in models:
-        data = np.loadtxt("data/" + model + "/comparison_exec_time.txt")
-        transcribe_t = [t[0] for t in data]
-        total_t = [t[1] for t in data]
-        plt.scatter(transcribe_t, total_t, alpha=0.4, label = model)
-
+def plot_transcribe_times(models):
+    '''
+    Create a bar plot comparing transcribe execution times across different models
     
-    plt.title("Rapport of execution time")
-    plt.xlabel("Transcribe time (s)")
-    plt.ylabel("Total time (s)")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    # plt.show()
+    Args:
+        models: list of str - model sizes to compare
+    '''
+    plt.figure(figsize=(10, 6))
+    colors = ['#3B75AF', '#EF8636', '#529E3F', '#C43A32']
+    
+    # Prepare data
+    model_means = []
+    model_stds = []
+    
+    for model in models:
+        data = np.loadtxt(f"data/{model}/comparison_exec_time.txt")
+        transcribe_times = data[:, 0]  # First column contains transcribe times
+        
+        model_means.append(np.mean(transcribe_times))
+        model_stds.append(np.std(transcribe_times))
+    
+    # Create bar plot
+    x = np.arange(len(models))
+    bars = plt.bar(x, model_means, yerr=model_stds, capsize=5, alpha=0.8, color=colors[:len(models)])
+    
+    # Customization
+    plt.title("Average Transcription Time by Model Size")
+    plt.xlabel("Model Size")
+    plt.ylabel("Time (seconds)")
+    plt.xticks(x, models)
+    
+    # Add value labels on top of each bar
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height,
+                f'   {height:.2f}s',
+                ha='left', va='bottom')
+    
+    plt.grid(True, axis='y', alpha=0.3)
+
 
 # MAIN #
-
 def main():
     # Processes only one audio file, predetermined to have record = False to not polluate the data files, will print data in terminal
     # fw_model_size = "tiny"
     # fw_model_size = "small"
-    fw_model_size = "medium"
-    # fw_model_size = "large-v3"
-    # processAudio("samples/assignment.m4a", fw_model_size)
-    # processAudio("samples/withNoise/calcul-10.mp3")
-
-    # Processes all the files in 'samples' directory
-    # processAllAudio(fw_model_size)
-
-    # getTranscript("samples/juin.m4a", record=False)
-
-    # Plotting data
-    # models = ["tiny", "small", "medium", "large-v3"]
-    # models = ["small", "large-v3"]
-    models = ["large-v3"]
-    plotScore(models)
-    plotTimeComp(models)
-    plt.show()
+    # fw_model_size = "medium"
+    fw_model_size = "large-v3"
+    getTranscript("samples/juin.m4a", fw_model_size, record=False)
+    # getScore("samples/juin.m4a", None, fw_model_size, record=False)
 
     print("Finished.")
     

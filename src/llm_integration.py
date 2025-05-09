@@ -1,12 +1,12 @@
-from ollama import chat, embeddings
+import ollama
 from whisper_processor import getTranscript
 import numpy as np
 
+def get_embedding(text: str):
+    response = ollama.embeddings(model='mxbai-embed-large', prompt=text)
+    return response['embedding']
 
 def test_RAG():
-  def get_embedding(text: str):
-      response = embeddings(model='mxbai-embed-large', prompt=text)
-      return response['embedding']
 
   # Exemple de documents à indexer
   documents = [
@@ -46,7 +46,7 @@ def test_RAG():
     },
   ]
 
-  response = chat('llama3.2:3b', messages=messages)
+  response = ollama.chat('llama3.2:3b', messages=messages)
   print(response['message']['content'])
 
 
@@ -59,25 +59,31 @@ def getResponse(audioPath, policy, model='llama3.2:3b'):
     :params model : str - model name of the llm to be used to process the msg
     :returns answer : str - answer of the llm
     '''
-    command = getTranscript(audioPath, record=False)
-    file = open("coda.txt", "r")
+    command = getTranscript(audioPath, "medium", record=False)
+    file = open(policy, "r")
     capabilities = file.read()
 
     messages = [
         {
             'role' : 'user',
-            'content' : f'You are a robot controlled by the following Python class (your CODA policy):  {capabilities} '
+            'content' : f'You are a robot controlled by the following instructions:  {capabilities} '
                 f'Command "{command}". '
-                'What action(s) do you take? Respond with only the necessary function calls in Python-like syntax.',
-                # "If you don't understant the user you can ask for clarifications, and specifying what needs to be clarified.",
+                'What action(s) do you take? First think about the answer. Then respond with only the necessary function calls in pseudo-code syntax.',
         },
     ]
 
-    response = chat(model, messages=messages)
+    response = ollama.chat(model, messages=messages)
     answer = response['message']['content']
     return answer
 
+def test_CAD():
+    answer = getResponse("samples/withNoise/snack-20.mp3", "code_as_policy.txt")
+    print(answer)
+
+
+
 if __name__ == "__main__":
-    # test_RAG()
-    # test_CAD("test.wav", "coda.txt")
-    pass
+    test_RAG()
+    # test_CAD()
+    
+    print("End of the test")
