@@ -284,12 +284,13 @@ def plotScore(models):
         plt.plot(xvalues, data, marker='o', linestyle='-', label=model)
         plt.fill_between(xvalues, q1, q3, alpha = 0.2)
     
+    plt.plot(xvalues, [90 for _ in range(len(xvalues))], linestyle='--', label='baseline', color='black')
     plt.legend()
     plt.grid(True, alpha=0.2)
     # plt.show()
 
 def plotTimeComp(models):
-    # TODO modify to take into account fw model
+    '''Scatter plot of the execution time, ratio between total time of the method getTranscription and only the transcribe'''
     plt.figure(figsize=(7,7))
     for model in models:
         data = np.loadtxt("data/" + model + "/comparison_exec_time.txt")
@@ -323,8 +324,8 @@ def main():
     # getTranscript("samples/juin.m4a", record=False)
 
     # Plotting data
-    models = ["tiny", "small", "medium", "large-v3"]
-    # models = ["medium", "large-v3"]
+    # models = ["tiny", "small", "medium", "large-v3"]
+    models = ["medium", "large-v3"]
     plotScore(models)
     plotTimeComp(models)
     plt.show()
