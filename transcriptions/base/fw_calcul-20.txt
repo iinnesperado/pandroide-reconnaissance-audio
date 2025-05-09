@@ -1,0 +1,1 @@
+ Choisez un nombre, multiplie-le par lui-même et au résultat en l'évouïde. Qu'est-ce que tu obtiens ?

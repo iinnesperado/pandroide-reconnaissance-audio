@@ -1,0 +1,1 @@
+ Donne un côté pétain qui printe dans le terminal une série de N nombre. N est en chiffre donnée en paramètre par l'utilisateur.

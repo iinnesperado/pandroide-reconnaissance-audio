@@ -1,0 +1,1 @@
+ Donne un coup de putain qui prit dans le terminal une série de N nom. N est en chiffre donnée en paramètre par l'utilisateur.
