@@ -4,7 +4,7 @@ import threading
 import time
 from typing import Dict, List
 import keyboard
-from speech2LLM import getText
+from speech2LLM import getTranscript
 import wave
 
 import numpy as np
@@ -271,5 +271,5 @@ if __name__ == "__main__":
     #threading.Thread(target=listen_keyboard, daemon=True).start()
     #audio_stream()
     audio = record_audio()
-    print(getText(audio,False))
+    print(getTranscript(audio,False))
 
