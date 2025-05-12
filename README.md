@@ -83,7 +83,7 @@ Puis les données générées par les tests sont souvegardées dans les réperto
 - pyaudio
 - numpy
 - matplotlib
-- keyboard
+- pynput
 
 ## Contributeurs 
 - Ines RAHAOUI
