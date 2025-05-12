@@ -3,6 +3,6 @@ ollama==0.4.7
 matplotlib==3.9.4
 numpy==2.0.2
 PyAudio==0.2.14
-keyboard==0.6.8
+pynput==1.7.6
 wave==0.0.3
 threading==0.1.7
