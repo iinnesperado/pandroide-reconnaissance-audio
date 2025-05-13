@@ -4,7 +4,7 @@ Projet réalisé dans le cadre du M1 Androide (AI2D)
 **Sujet :** Reconnaissance audio par des modèles de fondation pour un robot manipulateur mobile.
 
 ## Fonctionnalités
-Ce projet implémente un sistème de reconnaissance vocale en utilisant des modèles de LLM. Le système :
+Ce projet implémente un système de reconnaissance vocale en utilisant des modèles de LLM. Le système :
 - Trascrit la parole en utilisant les modèles Faster-Whisper
 - Traite les commandes via un LLM
 
